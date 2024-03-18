@@ -21,7 +21,7 @@ function complex_output = winograd_1d_fft(input)
         % Compute the k-th element of the real and imaginary parts of the WFTA output
         for n = 1:N
             % Calculate the cosine and sine terms
-            cos_term = cos(2*pi*(n-1)*(k-1)/N);
+            cos_term =  cos(2*pi*(n-1)*(k-1)/N);
             sin_term = -sin(2*pi*(n-1)*(k-1)/N);
             
             % Accumulate the real and imaginary parts
