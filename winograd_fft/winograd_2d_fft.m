@@ -1,29 +1,76 @@
-function real_output = winograd_2d_fft(input_matrix)
-    % Function to compute the 2D Winograd FFT directly using cosine functions
+function c_output = winograd_2d_fft(input_matrix)
+    % Function to compute the 2D Winograd FFT
     %
     % Parameters:
-    %   input_matrix: Input matrix to transform (2D array)
+    %   input_matrix: 2D matrix representing the input image
     %
     % Output:
-    %   real_output: Real part of the 2D Winograd FFT output
+    %   complex_output: Complex output of the 2D Winograd FFT
+
+    % Define the Transform Matrix G
+    G = [  1,    0,    0,    0;
+         0.5,  0.5,  0.5,  0.5;
+         0.5, -0.5,  0.5, -0.5;
+           0,    0,    1,    0 ];
     
-    [M, N] = size(input_matrix);
-    real_output = zeros(M, N);
+    % Get the dimensions of the input matrix
+    [rows, cols] = size(input_matrix);
     
-    % Winograd transform matrix
-    G = [
-        1, 0, 0, 0;
-        cos(pi/4), cos(2*pi/4), cos(4*pi/4), cos(6*pi/4);
-        cos(2*pi/4), cos(4*pi/4), cos(6*pi/4), cos(8*pi/4);
-        0, 0, 1, 0
-    ];
+    % Determine the number of rows and columns needed for zero-padding
+    pad_rows = mod(4 - mod(rows, 4), 4);
+    pad_cols = mod(4 - mod(cols, 4), 4);
     
-    % Step 1: Compute Intermediate Matrix B
-    B = input_matrix * G.';
+    % Pad the input matrix with zeros to ensure dimensions are multiples of 4
+    padded_input = padarray(input_matrix, [pad_rows, pad_cols], 0, 'post');
     
-    % Step 2: Compute Intermediate Matrix BT
-    BT = G * B.';
+    % Get the updated dimensions after zero-padding
+    [padded_rows, padded_cols] = size(padded_input);
     
-    % Step 3: Compute Real Part of the 2D Winograd FFT
-    real_output = real(BT);
+    % Create an empty complex matrix to store the transformed values
+    complex_output = zeros(padded_rows, padded_cols);
+    
+    % Step 1: Apply the Transform Matrix G to blocks of the padded input matrix
+    for i = 1:4:padded_rows
+        for j = 1:4:padded_cols
+            % Extract a 4x4 block from the padded input matrix
+            block = padded_input(i:i+3, j:j+3);
+            
+            % Apply the Transform Matrix G to the block
+            transformed_block = G * block * G';
+            
+            % Store the transformed block in the complex output matrix
+            complex_output(i:i+3, j:j+3) = transformed_block;
+        end
+    end
+    
+    % Step 2: Block Processing
+    for i = 1:4:rows
+        for j = 1:4:cols
+            % Extract a 4x4 block from the complex output matrix
+            block = complex_output(i:i+3, j:j+3);
+            
+            % Compute the Hadamard product with the matrix H
+            H = [1,  1,  1,  0;
+                 0,  1, -1,  1;
+                 1, -1, -1,  0;
+                 0,  1,  0, -1];
+            
+            processed_block = H * block * H';
+            
+            % Store the processed block back into the complex output matrix
+            complex_output(i:i+3, j:j+3) = processed_block;
+        end
+    end
+    
+    % Step 3: Compute the Real Part of the 2D WFTA
+    real_output = real(complex_output);
+    
+    % Step 4: Compute the Imaginary Part of the 2D WFTA
+    imag_output = imag(complex_output);
+    
+    % Step 5: Combine the Real and Imaginary Parts into Complex Output
+    c_output = complex(real_output, imag_output);
+    
+    % Trim the output matrix to the original input size
+    c_output = complex(c_output(1:rows, 1:cols));
 end
