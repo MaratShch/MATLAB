@@ -1,4 +1,4 @@
-function c_output = winograd_2d_fft(input_matrix)
+function complex_output = winograd_2d_fft(input_matrix)
     % Function to compute the 2D Winograd FFT
     %
     % Parameters:
@@ -8,10 +8,10 @@ function c_output = winograd_2d_fft(input_matrix)
     %   complex_output: Complex output of the 2D Winograd FFT
 
     % Define the Transform Matrix G
-    G = [  1,    0,    0,    0;
+    G = [1, 0, 0, 0;
          0.5,  0.5,  0.5,  0.5;
          0.5, -0.5,  0.5, -0.5;
-           0,    0,    1,    0 ];
+         0, 0, 1, 0];
     
     % Get the dimensions of the input matrix
     [rows, cols] = size(input_matrix);
@@ -44,16 +44,16 @@ function c_output = winograd_2d_fft(input_matrix)
     end
     
     % Step 2: Block Processing
-    for i = 1:4:rows
-        for j = 1:4:cols
+    for i = 1:4:padded_rows
+        for j = 1:4:padded_cols
             % Extract a 4x4 block from the complex output matrix
             block = complex_output(i:i+3, j:j+3);
             
             % Compute the Hadamard product with the matrix H
-            H = [1,  1,  1,  0;
-                 0,  1, -1,  1;
-                 1, -1, -1,  0;
-                 0,  1,  0, -1];
+            H = [1, -1, 1, -1;
+                 -1, 1, -1, 1;
+                 1, -1, 1, -1;
+                 -1, 1, -1, 1];
             
             processed_block = H * block * H';
             
@@ -68,9 +68,25 @@ function c_output = winograd_2d_fft(input_matrix)
     % Step 4: Compute the Imaginary Part of the 2D WFTA
     imag_output = imag(complex_output);
     
-    % Step 5: Combine the Real and Imaginary Parts into Complex Output
-    c_output = complex(real_output, imag_output);
+    % Step 5: Multiply by Matrix H
+    for i = 1:4:padded_rows
+        for j = 1:4:padded_cols
+            % Extract a 4x4 block from the complex output matrix
+            blockR = real_output(i:i+3, j:j+3);
+            blockI = imag_output(i:i+3, j:j+3);
+            
+            % Compute the Hadamard product with the matrix H
+            YR = H * blockR * H';
+            YI = H * blockI * H';
+            
+            % Store the processed block back into the complex output matrix
+            complex_output(i:i+3, j:j+3) = complex(YR, YI);
+        end
+    end
     
-    % Trim the output matrix to the original input size
-    c_output = complex(c_output(1:rows, 1:cols));
+    % Normalize the output
+    complex_output = complex_output / sqrt(rows * cols);
+    
+    % Convert the output to 'complex double'
+    complex_output = complex(complex_output);
 end

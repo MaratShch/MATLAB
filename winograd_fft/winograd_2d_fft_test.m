@@ -24,15 +24,14 @@ F_u = winograd_2d_fft(x);
 disp("Winograd 2D FFT Result F_u:");
 disp(F_u.');
 
-% Compute 2D FFT for columns and for rows
-% output_matrix = winograd_2d_by_1d_fft (x);
-% disp("Winograd 2D FFT Result by 1D functions:");
-% disp(output_matrix');
-
 % Buil-in functions for references only
 F_u_ref = fft2(x);
 % Display the results
 disp("Matlab buil-in function 2D FFT. Result F_u:");
 disp(F_u_ref.');
+
+diff = F_u_ref - F_u;
+disp("Computational differences fft2() - winograd_2d_fft():");
+disp(diff.');
 
 fprintf("Completed.\n");
