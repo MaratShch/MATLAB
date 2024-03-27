@@ -1,11 +1,11 @@
-% % D65
-% % Cloudy (D65 with slight tint)
-% % Tungsten (Incandescent)
-% % Fluorescent (Daylight or Cool White)
-% % Warm White Fluorescent
-% % Incandescent (Tungsten)
-% % Soft White Fluorescent
-% % Moonlight (Cool Blue)
+%% D65 (Daylight, sRGB): 6504 Kelvin - Marked as "D65"
+%% Cloudy D65 (D65 with slight tint): 6504 Kelvin - Marked as "D65 Cloudy"
+%% Tungsten (Incandescent): 3200 Kelvin - Marked as "A"
+%% Fluorescent Daylight: 6500 Kelvin - Not on the list
+%% Warm White Fluorescent: 3000 Kelvin - Not on the list
+%% Incandescent: 2700 Kelvin - Not on the list
+%% Soft White Fluorescent: 4200 Kelvin - Not on the list
+%% Moonlight (Cool Blue): 4100 Kelvin - Not on the list
 
 clc;
 clear all;

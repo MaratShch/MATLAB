@@ -1,3 +1,6 @@
+% % Planckian locus or black body locus is the path or locus that the color of 
+% % an incandescent black body would take in a particular chromaticity space 
+% % as the blackbody temperature changes
 function illuminant_spd = Planck (Wavelengths, WhitePoint)
     % Constants
     c = 299792458;        % Speed of light in m/s
