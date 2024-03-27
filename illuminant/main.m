@@ -21,6 +21,7 @@ tint_factor = 0.03;
 d65_cloudy = illuminant_d65_cloudy (wavelength, tint_factor);
 tungsten = illuminant_tungsten (wavelength);
 fluorescent_daylight = illuminant_fluorescent_daylight(wavelength);
+fluorescent_warm_white = illuminant_warm_white_fluorescent(wavelength);
 
 hold on;
 
@@ -35,7 +36,9 @@ hold on;
 p3 = plot(w_direction, tungsten, 'red');
 hold on;
 p4 = plot(w_direction, fluorescent_daylight, 'magenta');
+hold on;
+p5 = plot(w_direction, fluorescent_warm_white, 'green');
 
-legend('D65', 'D65 Cloudy', 'Tungsten', 'Fluorescent');
+legend('D65', 'D65 Cloudy', 'Tungsten', 'Fluorescent DayLight', 'Fluorescent WarmWhite');
 
 fprintf("Complete\n");

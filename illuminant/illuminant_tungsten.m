@@ -1,16 +1,5 @@
-function illuminant_tungsten = illuminant_tungsten(wavelengths)
-    % Constants
-    c = 299792458;        % Speed of light in m/s
-    h = 6.62607015e-34;   % Planck's constant in m^2 kg/s
-    k = 1.380649e-23;     % Boltzmann's constant in m^2 kg/s^2 K
-    T = 2856;             % Temperature of tungsten illuminant in Kelvin
-
-    % Convert wavelength to meters
-    lambda = wavelengths / 1e9;  % Convert nm to meters
-
-    % Calculate spectral radiance for each wavelength
-    spectral_radiance = (2 * pi * c^2 * h) ./ (lambda.^5 .* (exp((h * c) ./ (lambda * k * T)) - 1));
-
-    % Normalize to have a peak value of 1.0
-    illuminant_tungsten = spectral_radiance / max(spectral_radiance);
+function illuminant_spd = illuminant_tungsten(wavelengths)
+    % Temperature of tungsten illuminant in Kelvin
+    T = 2856;             
+    illuminant_spd = Planck (wavelengths, T);
 end
