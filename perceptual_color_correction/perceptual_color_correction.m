@@ -29,8 +29,10 @@ function adjusted_image = perceptual_color_correction(rgb_image, cct_value, tint
 %       - Each sub-step will be implemented as separate functions later.
 
 % Step 1: White Balance Adjustment
-% white_balanced_image = white_balance_adjustment(rgb_image);
-
+ white_balanced_image = grayWorldWhiteBalance (rgb_image);
+ figure(2);
+ imshow(white_balanced_image);
+ 
 % Step 2: Compute CCT and Tint
 % [estimated_cct, estimated_tint] = compute_cct_and_tint(white_balanced_image);
 % fprintf('Estimated CCT: %.2f Kelvin\n', estimated_cct);
