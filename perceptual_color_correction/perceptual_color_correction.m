@@ -28,22 +28,28 @@ function adjusted_image = perceptual_color_correction(rgb_image, cct_value, tint
 %   NOTE:
 %       - Each sub-step will be implemented as separate functions later.
 
+
 % Step 1: White Balance Adjustment
  white_balanced_image = grayWorldWhiteBalance (rgb_image);
  figure(2);
  imshow(white_balanced_image);
  
 % Step 2: Compute CCT and Tint
-% [estimated_cct, estimated_tint] = compute_cct_and_tint(white_balanced_image);
-% fprintf('Estimated CCT: %.2f Kelvin\n', estimated_cct);
-% fprintf('Estimated Tint: %.2f\n', estimated_tint);
+% %  [estimated_cct, estimated_tint] = compute_cct_and_tint (white_balanced_image);
+% %  fprintf('Balanced Image. Estimated CCT: %.2f Kelvin\n', estimated_cct);
+% %  fprintf('Balanced Image. Estimated Tint: %.2f\n', estimated_tint);
 
-% Step 3: CCT and Tint Adjustment
-% adjusted_image = cct_and_tint_adjustment(rgb_image, cct_value, tint_value);
+[x, y] = compute_chromaticity_coordinates (white_balanced_image);
+x_avg = mean(x(:));
+y_avg = mean(y(:));
 
-% Return the adjusted image
-% Note: Uncomment the relevant steps once their functions are implemented.
-% For now, returning the input image without adjustments.
-adjusted_image = rgb_image;
+% % 
+% % % Step 3: CCT and Tint Adjustment
+% % % adjusted_image = cct_and_tint_adjustment(white_balanced_image, cct_value, tint_value);
+% % 
+% % % Return the adjusted image
+% % % Note: Uncomment the relevant steps once their functions are implemented.
+% % % For now, returning the input image without adjustments.
+adjusted_image = white_balanced_image;
 
 end

@@ -1,25 +1,37 @@
-function balancedImage = grayWorldWhiteBalance(rgbImage)
-    % Calculate the average color of the image
-    averageColor = mean(mean(rgbImage, 1), 2);
+function balanced_image = grayWorldWhiteBalance(rgb_image)
+% gray_world - Gray World Algorithm for white balance correction
+%
+% Usage:
+%   balanced_image = gray_world(rgb_image)
+%
+% Inputs:
+%   - rgb_image: Input RGB image (floating point format, range 0...1)
+%
+% Output:
+%   - balanced_image: White-balanced RGB image
+%
+% Description:
+%   This function performs white balance correction on the input RGB image
+%   using the Gray World Algorithm. It assumes that the average color in the
+%   image should appear gray and adjusts color channels accordingly.
 
-    % Compute scaling factors for each color channel
-    scalingFactors = 0.5 ./ averageColor;
+% Compute average color of the image
+avg_color = mean(mean(rgb_image, 1), 2);
 
-    % Get image dimensions
-    [height, width, ~] = size(rgbImage);
+% Compute scaling factors for each color channel
+scale_factor_r = 0.5 / avg_color(1);
+scale_factor_g = 0.5 / avg_color(2);
+scale_factor_b = 0.5 / avg_color(3);
 
-    % Initialize balanced image
-    balancedImage = zeros(height, width, 3, 'like', rgbImage);
+% Get the size of the image
+[rows, cols, ~] = size(rgb_image);
 
-    % Apply scaling factors to each pixel's color value
-    for i = 1:height
-        for j = 1:width
-            for k = 1:3 % Iterate over RGB channels
-                balancedImage(i, j, k) = rgbImage(i, j, k) * scalingFactors(k);
-            end
-        end
-    end
+% Initialize balanced image
+balanced_image = zeros(rows, cols, 3);
 
-    % Clip pixel values to ensure they remain within the valid range [0, 1]
-    balancedImage = max(0, min(balancedImage, 1));
+% Apply scaling factors to each color channel
+balanced_image(:,:,1) = rgb_image(:,:,1) * scale_factor_r;
+balanced_image(:,:,2) = rgb_image(:,:,2) * scale_factor_g;
+balanced_image(:,:,3) = rgb_image(:,:,3) * scale_factor_b;
+
 end

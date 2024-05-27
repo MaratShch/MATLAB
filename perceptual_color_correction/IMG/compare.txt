@@ -1,0 +1,12 @@
+File name:               Our Implementation:      Lightroom:
+=================================================================
+
+balanced/rose              4972.51 + 0.50         4150 + 3  
+disbalanced/rose           5325.77 + 0.50          
+
+balanced/beans             5003.12 + 0.50         5060 + 30
+disbalanced/beans          4889.44 + 0.50         3719 + 29
+
+balanced/flowers           4939.29 + 0.50         5900 + 15
+disbalanced/flowers        4884.53 + 0.50         2000 - 10
+   
