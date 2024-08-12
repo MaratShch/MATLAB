@@ -15,9 +15,10 @@ function output = winograd_fft_2d(input)
     
     % Step 3: Factorization and Transformation
      blocks = factorize_input(input_padded, block_size);
-%     transformed_blocks = apply_winograd_transform(blocks);
-%     
-%     % Step 4: Post-processing
-%     output = recombine_blocks(transformed_blocks);
+
+     transformed_blocks = apply_winograd_transform(blocks);
+     
+     % Step 4: Post-processing
+     output = recombine_blocks(transformed_blocks);
     
 end
