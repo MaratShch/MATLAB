@@ -6,8 +6,14 @@ function [Cct, Duv] = RGB2CctDuv (R, G, B, gamma, lut)
   idx = FindClosestCCT (u0, v0, lut);
   iCct = lut(idx).cct;
   iDuv = lut(idx).duv;
-  
- 
-  [refinedCCT, refinedDuv, refined_u, refined_v] = refine_CCT_Duv(u0, v0, iCct, iDuv, lut)
+  fprintf('Initial (coarse) values of u = %f and v = %f\n', u0, v0);
+  fprintf('Initial (coarse) values of CCT = %f and DUV = %f\n', iCct, iDuv);
+    
+  [refinedCCT, refinedDuv, refined_u, refined_v] = refine_CCT_Duv(u0, v0, lut);
+  fprintf('Refined (fine) values of u = %f and u = %f\n', refined_u, refined_v);
+  fprintf('Refined (fine) values of CCT = %f and DUV = %f\n', refinedCCT, refinedDuv);
 
+  Cct = refinedCCT;
+  Duv = refinedDuv;
+  
 end
