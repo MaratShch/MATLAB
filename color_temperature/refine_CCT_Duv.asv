@@ -65,7 +65,7 @@ for iter = 1:MAX_ITER
     refDuv = refDuv_new;
 end
 
-fprintf(' - Refinement takes %d cycles\n', iter);
+fprintf(' - Refinement takes %d cycles]
 % Final outputs
 refinedCCT = refCCT;
 refinedDuv = refDuv;

@@ -40,10 +40,15 @@ lut = arrayfun(@(i) struct('u', u(i), 'v', v(i), 'cct', cct(i), 'duv', duv(i)), 
 
 % check reference point
 gamma = 1;
-R = 240.0;
-G = 255.0;
-B = 240.0;
+R = 255.0;
+G = 213.0;
+B = 173.0;
+expectedCCT = 4200.0;
+
+fprintf('Color values R = %f, G = %f, B = %f\n', R, G, B);
 [Cct, Duv] = RGB2CctDuv(R, G, B, gamma, lut);
+fprintf('Computed CCT and Tint: CCT = %f, Tint = %f\n', Cct, Duv);
+fprintf('Expected CCT = %f\n', expectedCCT);
 
 
 
