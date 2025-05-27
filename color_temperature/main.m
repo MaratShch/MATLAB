@@ -39,17 +39,56 @@ indices = 1:numElements;
 lut = arrayfun(@(i) struct('u', u(i), 'v', v(i), 'cct', cct(i), 'duv', duv(i)), indices);
 
 % check reference point
-gamma = 1;
+gamma = 0;
 R = 255.0;
-G = 213.0;
-B = 173.0;
-expectedCCT = 4200.0;
+G = 255.0;
+B = 255.0;
+expectedCCT = 6504.0;
+expectedDuv = 0.0;
 
 fprintf('Color values R = %f, G = %f, B = %f\n', R, G, B);
+fprintf('Gamma correction = %d\n', gamma);
+fprintf('Used observer = %d\n', CIE_observer);
 [Cct, Duv] = RGB2CctDuv(R, G, B, gamma, lut);
 fprintf('Computed CCT and Tint: CCT = %f, Tint = %f\n', Cct, Duv);
-fprintf('Expected CCT = %f\n', expectedCCT);
+fprintf('Expected CCT and Tint: CCT = %f, Tint = %f\n', expectedCCT, expectedDuv); 
+fprintf('Differences between expected and computed values: CCT = %f, Duv = %f\n', ...
+         expectedCCT - Cct, expectedDuv - Duv); 
+fprintf('\n');
+
+gamma = 0;
+R = 255.0;
+G = 219.0;
+B = 165.0;
+expectedCCT = 2850.0;
+expectedDuv = 0.0;
+     
+fprintf('Color values R = %f, G = %f, B = %f\n', R, G, B);
+fprintf('Gamma correction = %d\n', gamma);
+fprintf('Used observer = %d\n', CIE_observer);
+[Cct, Duv] = RGB2CctDuv(R, G, B, gamma, lut);
+fprintf('Computed CCT and Tint: CCT = %f, Tint = %f\n', Cct, Duv);
+fprintf('Expected CCT and Tint: CCT = %f, Tint = %f\n', expectedCCT, expectedDuv); 
+fprintf('Differences between expected and computed values: CCT = %f, Duv = %f\n', ...
+         expectedCCT - Cct, expectedDuv - Duv); 
+fprintf('\n');
 
 
+gamma = 0;
+R = 201.0;
+G = 226.0;
+B = 255.0;
+expectedCCT = 7500.0;
+expectedDuv = -0.001;
+     
+fprintf('Color values R = %f, G = %f, B = %f\n', R, G, B);
+fprintf('Gamma correction = %d\n', gamma);
+fprintf('Used observer = %d\n', CIE_observer);
+[Cct, Duv] = RGB2CctDuv(R, G, B, gamma, lut);
+fprintf('Computed CCT and Tint: CCT = %f, Tint = %f\n', Cct, Duv);
+fprintf('Expected CCT and Tint: CCT = %f, Tint = %f\n', expectedCCT, expectedDuv); 
+fprintf('Differences between expected and computed values: CCT = %f, Duv = %f\n', ...
+         expectedCCT - Cct, expectedDuv - Duv); 
+fprintf('\n');
 
 
