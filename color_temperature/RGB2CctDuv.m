@@ -1,6 +1,6 @@
 function [Cct, Duv] = RGB2CctDuv (R, G, B, gamma, lut)
   [X, Y, Z] = sRGB2XYZ(R/255.0, G/255.0, B/255.0, gamma);
-  [u0, v0] = XYZ2uv(X, Y, Z);
+  [u0, v0] = XYZ2uv_1960(X, Y, Z);
 
   % Get initial value of CCT and Duv from chromaticity coordinates u and v
   idx = FindClosestCCT (u0, v0, lut);

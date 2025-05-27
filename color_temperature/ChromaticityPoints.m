@@ -18,7 +18,7 @@ function [u,v,cct,duv] = ChromaticityPoints (Wavelengths, observer, CCTlengths)
       Y = sum(Y_vector);
       Z = sum(Z_vector);
       
-      [u_prime, v_prime] = XYZ2uv (X, Y, Z);
+      [u_prime, v_prime] = XYZ2uv_1960 (X, Y, Z);
       Duv = polinomial_compute_duv(u_prime, v_prime);
       
       u(i)   = u_prime;
