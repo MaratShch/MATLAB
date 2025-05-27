@@ -10,8 +10,8 @@ function illuminant_spd = Planck (Wavelengths, WhitePoint)
     % Convert wavelength to meters
     lambda = Wavelengths / 1e9;  % Convert nm to meters
 
-    % Calculate spectral radiance for each wavelength
-    spectral_radiance = (2 * pi * c^2 * h) ./ (lambda.^5 .* (exp((h * c) ./ (lambda * k * WhitePoint)) - 1));
+    % Planck’s law (spectral radiance, W·sr?¹·m?³)
+    spectral_radiance = (2 * h * c^2) ./ (lambda .^ 5 .* (exp((h * c) ./ (lambda * k * WhitePoint)) - 1));
 
     % Normalize to have a peak value of 1.0
     illuminant_spd = spectral_radiance / max(spectral_radiance);
