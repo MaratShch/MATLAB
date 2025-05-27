@@ -9,11 +9,11 @@ function [Cct, Duv] = RGB2CctDuv (R, G, B, gamma, lut)
   fprintf(' - Initial (coarse) values of u = %f and v = %f\n', u0, v0);
   fprintf(' - Initial (coarse) values of CCT = %f and DUV = %f\n', iCct, iDuv);
     
-  [refinedCCT, refinedDuv, refined_u, refined_v] = refine_CCT_Duv(u0, v0, lut);
-  fprintf(' - Refined (fine) values of u = %f and u = %f\n', refined_u, refined_v);
-  fprintf(' - Refined (fine) values of CCT = %f and DUV = %f\n', refinedCCT, refinedDuv);
+  [refined_CCT, refined_DUV, refined_u, refined_v] = refine_CCT_Duv(u0, v0, lut);
+  fprintf(' - Refined (fine) values of u = %f and v = %f\n', refined_u, refined_v);
+  fprintf(' - Refined (fine) values of CCT = %f and DUV = %f\n', refined_CCT, refined_DUV);
 
-  Cct = refinedCCT;
-  Duv = refinedDuv;
+  Cct = refined_CCT;
+  Duv = refined_DUV;
   
 end

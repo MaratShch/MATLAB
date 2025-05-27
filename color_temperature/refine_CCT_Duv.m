@@ -1,80 +1,47 @@
-function [refinedCCT, refinedDuv, refinedU, refinedV] = refineCCTDuv(u0, v0, lut)
-% Refines the initial coarse chromaticity coordinates (u0, v0)
-% using Ohno’s 2013 combined method with CCT and Duv refinement.
-% INPUT:
-%   u0, v0  - initial chromaticity coordinates
-%   lut     - LUT array with fields u, v, cct, duv
-%
-% OUTPUT:
-%   refinedCCT, refinedDuv - refined values
-%   refinedU, refinedV     - refined chromaticity coordinates
+function [refinedCCT, refinedDuv, u_proj, v_proj] = refine_CCT_Duv(u0, v0, lut)
+    % Step 1: extract u, v, cct vectors from LUT
+    uLUT = [lut.u];
+    vLUT = [lut.v];
+    cctLUT = [lut.cct];
 
-% === Tolerances and limits ===
-CCT_TOL = 1.0;        % Kelvin
-DUV_TOL = 0.0002;      % dimensionless
-MAX_ITER = 16;
+    % Step 2: find closest LUT point
+    distances = (uLUT - u0).^2 + (vLUT - v0).^2;
+    [~, idx_min] = min(distances);
 
-% === Initial projection ===
-initialIdx = findClosestCCTIndex(u0, v0, lut);
-refU = u0;
-refV = v0;
-refCCT = lut(initialIdx).cct;
-refDuv = lut(initialIdx).duv;
+    % Step 3: select Â±2 neighbors around idx_min
+    idx_range = max(1, idx_min-2):min(length(lut), idx_min+2);
+    u_seg = uLUT(idx_range);
+    v_seg = vLUT(idx_range);
+    cct_seg = cctLUT(idx_range);
 
-% === Refinement loop ===
-for iter = 1:MAX_ITER
-    % Project current u,v onto LUT
-    idx = findClosestCCTIndex(refU, refV, lut);
-    base = lut(idx);
+    % Step 4: fit parametric curve u(t), v(t), CCT(t) using normalized t
+    t = linspace(0, 1, numel(u_seg));
+    u_fit = spline(t, u_seg);
+    v_fit = spline(t, v_seg);
+    cct_fit = spline(t, cct_seg);
 
-    % Direction to move in (unit tangent vector on LUT curve)
-    if idx < length(lut)
-        next = lut(idx + 1);
-    else
-        next = lut(idx - 1);
-    end
-    du = next.u - base.u;
-    dv = next.v - base.v;
-    direction = [du; dv] / norm([du; dv]);
+    % Step 5: objective = distance^2 from (u0, v0) to (u(t), v(t))
+    objective = @(tval) (ppval(u_fit, tval) - u0).^2 + (ppval(v_fit, tval) - v0).^2;
 
-    % Perpendicular direction (normal to the locus at this point)
-    normal = [-direction(2); direction(1)];
+    % Step 6: find t* minimizing objective (constrained to [0,1])
+    options = optimset('TolX', 1e-10);
+    t_star = fminbnd(objective, 0, 1, options);
 
-    % Project current point to base point
-    delta = [refU - base.u; refV - base.v];
-    delta_duv = dot(delta, normal);   % how far we are from Planckian
+    % Step 7: evaluate projection point and interpolated CCT
+    u_proj = ppval(u_fit, t_star);
+    v_proj = ppval(v_fit, t_star);
+    refinedCCT = ppval(cct_fit, t_star);
 
-    % Update chromaticity u,v by stepping back toward the locus
-    step_size = 0.25 * delta_duv;
-    refU = refU - step_size * normal(1);
-    refV = refV - step_size * normal(2);
+    % Step 8: compute signed Duv (orthogonal distance)
+    % Approximate local direction vector (tangent to curve)
+    delta = 1e-5;
+    u_tangent = (ppval(u_fit, t_star + delta) - ppval(u_fit, t_star - delta)) / (2*delta);
+    v_tangent = (ppval(v_fit, t_star + delta) - ppval(v_fit, t_star - delta)) / (2*delta);
+    tangent = [u_tangent, v_tangent];
+    tangent = tangent / norm(tangent);  % Normalize
 
-    % Update CCT and Duv
-    idx_new = findClosestCCTIndex(refU, refV, lut);
-    refCCT_new = lut(idx_new).cct;
-    refDuv_new = dot([refU - lut(idx_new).u, refV - lut(idx_new).v], ...
-                     [-direction(2), direction(1)]);
-
-    % Check convergence
-    if abs(refCCT_new - refCCT) < CCT_TOL && abs(refDuv_new - refDuv) < DUV_TOL
-        break;
-    end
-
-    % Update values for next iteration
-    refCCT = refCCT_new;
-    refDuv = refDuv_new;
-end
-
-fprintf(' - Refinement takes %d cycles\n', iter);
-% Final outputs
-refinedCCT = refCCT;
-refinedDuv = refDuv;
-refinedU = refU;
-refinedV = refV;
-end
-
-function idx = findClosestCCTIndex(u, v, lut)
-% Finds index in LUT with closest Euclidean distance
-    distances = arrayfun(@(e) sqrt((u - e.u)^2 + (v - e.v)^2), lut);
-    [~, idx] = min(distances);
+    % Compute signed orthogonal distance
+    vec = [u0 - u_proj, v0 - v_proj];
+    orthogonal_vec = vec - dot(vec, tangent) * tangent;
+    refinedDuv = sign(det([tangent; vec])) * norm(orthogonal_vec);
 end
