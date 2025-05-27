@@ -1,4 +1,5 @@
 function [refinedCCT, refinedDuv, u_proj, v_proj] = refine_CCT_Duv(u0, v0, lut)
+
     % Step 1: extract u, v, cct vectors from LUT
     uLUT = [lut.u];
     vLUT = [lut.v];
